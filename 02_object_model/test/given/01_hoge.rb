@@ -5,15 +5,7 @@
 # HogeクラスのスーパークラスはStringである
 # 自身が"hoge"という文字列である時（HogeクラスはStringがスーパークラスなので、当然自身は文字列である）、trueを返すhoge?メソッドが定義されている
 
-class Hoge < String
-  Hoge = 'hoge'
-
-  def hogehoge
-    'hoge'
-  end
-  def hoge?
-    self == 'hoge'
-  end
+class Hoge
 end
 
 # Q2.
@@ -25,16 +17,3 @@ end
 # - Class
 # - Hash
 # - TrueClass
-
-# p "String: #{String.ancestors}"
-# p "Integer: #{Integer.ancestors}"
-# p "Numeric: #{Numeric.ancestors}"
-# p "Class: #{Class.ancestors}"
-# p "Hash: #{Hash.ancestors}"
-# p "TrueClass: #{TrueClass.ancestors}"
-
-class Object
-  def hoge
-    'hoge'
-  end
-end
