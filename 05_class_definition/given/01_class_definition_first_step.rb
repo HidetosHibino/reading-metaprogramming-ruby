@@ -7,13 +7,12 @@ end
 
 e1 = ExClass.new
 e2 = ExClass.new
-def e2.hello; end
+
 Judgement.call(e1, e2)
 
 # 2. ExClassを継承したクラスを作成してください。ただし、そのクラスは定数がない無名のクラスだとします。
 #    その無名クラスをそのままJudgement2.call の引数として渡してください(Judgement2.callはテスト側で定義するので実装は不要です)
-no_name_class = Class.new(ExClass)
-Judgement2.call(no_name_class)
+
 
 # 3. 下のMetaClassに対し、次のように`meta_`というプレフィックスが属性名に自動でつき、ゲッターの戻り値の文字列にも'meta 'が自動でつく
 #    attr_accessorのようなメソッドであるmeta_attr_accessorを作ってください。セッターに文字列以外の引数がくることは考えないとします。
@@ -29,15 +28,6 @@ Judgement2.call(no_name_class)
 #    meta.meta_hello #=> 'meta world'
 
 class MetaClass
-  class << self
-    def meta_attr_accessor(name)
-      meta_name = "meta_#{name}"
-      attr_writer(meta_name)
-      define_method(meta_name) do
-        'meta ' + instance_variable_get("@#{meta_name}")
-      end
-    end
-  end
 end
 
 # 4. 次のようなExConfigクラスを作成してください。ただし、グローバル変数、クラス変数は使わないものとします。
@@ -51,17 +41,6 @@ end
 
 
 class ExConfig
-  class << self
-    attr_accessor :config
-  end
-
-  def config
-    self.class.instance_variable_get(:@config)
-  end
-
-  def config=(value)
-    self.class.instance_variable_set(:@config, value)
-  end
 end
 
 # 5.
@@ -71,29 +50,7 @@ end
 #
 
 class ExOver
-  alias old_hello hello
-
-  def hello
-    before
-    old_hello
-    after
-  end
 end
-
-# 回答例はmodule　でアラウンドエイリアスを使い、それを適用。
-# superを使う関係上、継承チェーンは下にしたいため、prependを使用
-# module Hook
-#   def hello
-#     before
-#     super
-#     after
-#   end
-# end
-
-# class ExOver
-#   prepend Hook
-# end
-
 
 # 6. 次の toplevellocal ローカル変数の中身を返す MyGreeting#say を実装してみてください。
 #    ただし、下のMyGreetingは編集しないものとします。toplevellocal ローカル変数の定義の下の行から編集してください。
@@ -103,9 +60,3 @@ class MyGreeting
 end
 
 toplevellocal = 'hi'
-
-MyGreeting.class_eval do
-  define_method :say do
-    toplevellocal
-  end
-end
