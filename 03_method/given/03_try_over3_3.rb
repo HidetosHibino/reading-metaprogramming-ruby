@@ -5,23 +5,7 @@ TryOver3 = Module.new
 # - `test_` から始まるインスタンスメソッドが実行された場合、このクラスは `run_test` メソッドを実行する
 # - `test_` メソッドがこのクラスに実装されていなくても `test_` から始まるメッセージに応答することができる
 # - TryOver3::A1 には `test_` から始まるインスタンスメソッドが定義されていない
-class TryOver3::A1
-  def run_test
-    nil
-  end
 
-  def method_missing(name, *args)
-    if name.to_s.start_with?('test_')
-      run_test
-    else
-      super
-    end
-  end
-
-  def respond_to_missing?(name, _)
-    name.to_s.start_with?('test_')
-  end
-end
 
 # Q2
 # 以下要件を満たす TryOver3::A2Proxy クラスを作成してください。
@@ -31,23 +15,6 @@ class TryOver3::A2
   def initialize(name, value)
     instance_variable_set("@#{name}", value)
     self.class.attr_accessor name.to_sym unless respond_to? name.to_sym
-  end
-end
-
-class TryOver3::A2Proxy
-  def initialize(a2_obj)
-    @source = a2_obj
-  end
-
-  # Arguments Forwardingというテクニック
-  # https://qiita.com/pink_bangbi/items/f85456db344b468ef758#%E8%BB%A2%E9%80%81%E5%BC%95%E6%95%B0-forwarding-parameter
-  # https://qiita.com/kurashita/items/3c542f5e685e9ddd5250
-  def method_missing(...)
-    @source.send(...)
-  end
-
-  def respond_to_missing?(name, *args)
-    @source.respond_to?(name, args)
   end
 end
 
@@ -70,8 +37,6 @@ module TryOver3::OriginalAccessor2
           self.class.define_method "#{name}?" do
             @attr == true
           end
-        else
-          mod.remove_method "#{name}?" if respond_to? "#{name}?"
         end
         @attr = value
       end
@@ -87,23 +52,6 @@ end
 # # => "run Hoge"
 # このとき、TryOver3::A4::Hogeという定数は定義されません。
 
-# わからなかった。。。
-# const_missing で、変数がないときの挙動を制御できる
-class TryOver3::A4
-  def self.const_missing(const)
-    if @consts.include?(const)
-      obj = Object.new
-      obj.define_singleton_method(:run) { "run #{const}" }
-      obj
-    else
-      super
-    end
-  end
-
-  def self.runners=(consts)
-    @consts = consts
-  end
-end
 
 # Q5. チャレンジ問題！ 挑戦する方はテストの skip を外して挑戦してみてください。
 #
